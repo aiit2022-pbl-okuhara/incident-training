@@ -7,4 +7,3 @@ https://aiit-isa.backlog.jp/view/2022MO-xxx
 
 ## 期待される結果
 - [ ] xxx
-
