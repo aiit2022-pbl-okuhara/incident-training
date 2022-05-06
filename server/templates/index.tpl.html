@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <title>Go Safe Web sample application</title>
+    <link rel="stylesheet" href="/static/styles.css">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap">
+</head>
+
+<body>
+    <h2> Welcome to NoteKeeper </h2>
+    <form action="/login" method="post">
+        <div class="padded">
+            <label for="username"><b>Username</b></label>
+            <input type="text" placeholder="Username" name="username" required>
+
+            <label for="password"><b>Password</b></label>
+            <input type="password" placeholder="Password" name="password" required>
+
+            <button class="full-width" type="submit">Login</button>
+        </div>
+    </form>
+</body>
+
+</html>
