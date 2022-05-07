@@ -26,12 +26,18 @@ func main() {
 	if *dev {
 		safehttp.UseLocalDev()
 	}
-	db := storage.NewDB()
+	db, err := storage.NewDB()
+	if err != nil {
+		// TODO: 適切に error 処理を行う
+		log.Fatal(err)
+	}
 
 	addr := net.JoinHostPort("0.0.0.0", strconv.Itoa(*port))
 	mux := secure.NewMuxConfig(db, addr).Mux()
 	server.Load(db, mux)
 
 	log.Printf("Listening on %q", addr)
+
+	// TODO: 適切に error 処理を行う
 	log.Fatal(http.ListenAndServe(addr, mux))
 }

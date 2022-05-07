@@ -26,6 +26,7 @@ func init() {
 	// htmlinject automatically injects CSP nonces and XSRF tokens placeholders.
 	templates, err = htmlinject.LoadGlobEmbed(nil, htmlinject.LoadConfig{}, tplSrc, templatesFS)
 	if err != nil {
+		// TODO: 適切に error 処理を行う
 		panic(err)
 	}
 }
