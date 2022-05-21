@@ -4,9 +4,15 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"sync"
 
+	_ "github.com/lib/pq"
+
+	"github.com/google/go-safeweb/safesql"
 	"golang.org/x/crypto/scrypt"
+
+	"github.com/aiit2022-pbl-okuhara/incident-training/config"
 )
 
 type Note struct {
@@ -14,7 +20,8 @@ type Note struct {
 }
 
 type DB struct {
-	mu sync.Mutex
+	conn safesql.DB
+	mu   sync.Mutex
 	// user -> note title -> notes
 	notes map[string]map[string]Note
 	// user -> token
@@ -25,13 +32,28 @@ type DB struct {
 	credentials map[string]string
 }
 
-func NewDB() *DB {
+func NewDB() (*DB, error) {
+	c := config.Config
+
+	conn, err := safesql.Open(
+		"postgres",
+		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", c.DBHost, c.DBPort, c.DBUsername, c.DBPassword, c.DBName),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := conn.Ping(); err != nil {
+		return nil, err
+	}
+
 	return &DB{
+		conn:          conn,
 		notes:         map[string]map[string]Note{},
 		sessionTokens: map[string]string{},
 		userSessions:  map[string]string{},
 		credentials:   map[string]string{},
-	}
+	}, nil
 }
 
 // Notes
@@ -126,6 +148,7 @@ func hash(pw string) string {
 	salt := []byte("please use a proper salt in production")
 	hash, err := scrypt.Key([]byte(pw), salt, 32768, 8, 1, 32)
 	if err != nil {
+		// TODO: 適切に error 処理を行う
 		panic("this should not happen")
 	}
 	return string(hash)
